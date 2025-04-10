@@ -719,36 +719,6 @@ $(document).on('click', '#Checkout_Btn', function (event) {
 });
 
 // Function to update the checkout summary
-// function updateCheckoutSummary() {
-//     $("#checkout-summary-container").empty().removeClass("d-none");
-
-//     let checkoutItems = JSON.parse(localStorage.getItem('checkout_items')) || [];
-
-//     if (checkoutItems.length > 0) {
-//         let totalPrice = 0;
-
-//         checkoutItems.forEach(item => {
-//             let itemHtml = `
-//                 <div class="order-summary-item">
-//                     <img src="${item.image}" alt="${item.name}" class="summary-image">
-//                     <p><strong>${item.name}</strong></p>
-//                     <p>Price: ₹<span class="cart_total">${item.price}</span></p>
-//                 </div>
-//             `;
-//             $("#checkout-summary-container").append(itemHtml);
-//             totalPrice += parseFloat(item.price);
-//         });
-
-//         $("#final-price-display").html(`Total: ₹${totalPrice.toFixed(2)}`);
-//     }
-// }
-
-// // Load checkout summary on page load
-// $(document).ready(function () {
-//     updateCheckoutSummary();
-// });
-
-
 function updateCheckoutSummary() {
     $("#checkout-summary-container").empty().removeClass("d-none");
 
@@ -758,24 +728,25 @@ function updateCheckoutSummary() {
         let totalPrice = 0;
 
         checkoutItems.forEach(item => {
-            // Ensure the price is treated as a number
-            let numericPrice = parseFloat(item.price.toString().replace(/[^\d.]/g, '')) || 0;
-            totalPrice += numericPrice;
-
             let itemHtml = `
                 <div class="order-summary-item">
                     <img src="${item.image}" alt="${item.name}" class="summary-image">
                     <p><strong>${item.name}</strong></p>
-                    <p>Price: ₹<span class="cart_total">${numericPrice.toFixed(2)}</span></p>
+                    <p>Price: ₹<span class="cart_total">${item.price}</span></p>
                 </div>
             `;
             $("#checkout-summary-container").append(itemHtml);
+            totalPrice += parseFloat(item.price);
         });
 
         $("#final-price-display").html(`Total: ₹${totalPrice.toFixed(2)}`);
     }
 }
 
+// Load checkout summary on page load
+$(document).ready(function () {
+    updateCheckoutSummary();
+});
 
 
 document.addEventListener("DOMContentLoaded", function () {
