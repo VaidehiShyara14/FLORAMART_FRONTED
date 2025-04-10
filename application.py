@@ -284,15 +284,16 @@ def upload_image():
     base64_obj = base64.b64encode(image).decode('utf-8')
     # print(base64_obj)
 
-    request_data = {GIT
-        "image": base64_obj,
-        "plantName" : plantName,
-        "productType" : productType,
-        "plantType" : plantType,  
-        "plantDescription" : plantDescription,
-        "plantPrice":plantPrice,
-        "uploaderEmail": uploaderEmail
-    }
+    request_data = {
+    "image": base64_obj,
+    "plantName": plantName,
+    "productType": productType,
+    "plantType": plantType,
+    "plantDescription": plantDescription,
+    "plantPrice": plantPrice,
+    "uploaderEmail": uploaderEmail
+}
+
     # print(request_data)
     url = get_service_url() + '/save_image'
     response = post_api_function(url,request_data)
