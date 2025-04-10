@@ -658,6 +658,7 @@ $(document).on("submit", "#checkoutForm", function (e) {
 });
 
 
+
 function calculateSubtotal() {
     let subtotal = 0;
 
@@ -671,6 +672,7 @@ function calculateSubtotal() {
     localStorage.setItem('checkout_total', subtotal.toFixed(2)); 
     $("#cart-subtotal").text(subtotal.toFixed(2));
 }
+
 
 
 $(document).on('click', '#BuyNow_Btn', function (event) {
@@ -747,7 +749,6 @@ function updateCheckoutSummary() {
 $(document).ready(function () {
     updateCheckoutSummary();
 });
-
 
 document.addEventListener("DOMContentLoaded", function () {
     // Array of seasonal tips by month
