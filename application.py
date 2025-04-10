@@ -284,7 +284,7 @@ def upload_image():
     base64_obj = base64.b64encode(image).decode('utf-8')
     # print(base64_obj)
 
-    request_data = {
+    request_data = {GIT
         "image": base64_obj,
         "plantName" : plantName,
         "productType" : productType,
@@ -376,7 +376,7 @@ def get_remove_cart_item():
 #     print("Response from backend service:", response.json())  # Debug Log
 #     return json.dumps(response.json())
 
-
+ 
 
 @app.route('/submit_order_details', methods=['POST'])
 def submit_order_details():
