@@ -179,7 +179,7 @@ def get_api_function(url):
     return response
 
 def get_service_url():
-    return 'http://localhost:50000'
+    return "https://floramart-backend.onrender.com"
 
 def post_api_function(url, data):
     response = ''
