@@ -611,7 +611,146 @@ $(".cart-icon span").text(cartCount);
 // });
 
 
-function get_submit_order_details_data(request_data){
+// function get_submit_order_details_data(request_data){
+//     $.ajax({
+//         url: '/submit_order_details',
+//         type: "POST",
+//         dataType: "json",
+//         contentType: "application/json",
+//         data: JSON.stringify(request_data),
+//         beforeSend: function () {
+//             console.log("Submitting order form...");
+//         },
+//         success: function (response) {
+//             if (response.status === "Success") {
+//                 console.log("Order submitted successfully:", response);
+//                 $("#response-message").text("Thank you for buying plants! Your order has been received.").show();
+//                 setTimeout(function () {
+//                     window.location.href = '/buyNowPage';
+//                 }, 3000);
+//             } else {
+//                 alert("Failed to submit the order form: " + response.message);
+//             }
+//         },
+//         error: function (jqXhr, textStatus, errorMsg) {
+//             alert("An error occurred during submission: " + errorMsg);
+//         }
+//     });
+// }
+
+// $(document).on("submit", "#checkoutForm", function (e) {
+//     e.preventDefault(); 
+
+//     const request_data = {
+//         email_or_phone: $("#email").val(),
+//         news_offers_subscription: $("#newsOffers").is(":checked"),
+//         first_name: $("#first_name").val(),
+//         last_name: $("#last_name").val(),
+//         address: $("#address").val(),
+//         apartment_details: $("#apartmentDetails").val(),
+//         city: $("#city").val(),
+//         state: $("#state").val(),
+//         pin_code: $("#pin_code").val(),
+//         phone_number: $("#phone").val()
+//     };
+
+//     get_submit_order_details_data(request_data);
+// });
+
+// function calculateSubtotal() {
+//     let subtotal = 0;
+
+//     $(".item-total").each(function () {
+//         let price = parseFloat($(this).text().trim()) || 0; 
+//         subtotal += price;
+//     });
+
+//     console.log("Calculated subtotal:", subtotal);
+
+//     localStorage.setItem('checkout_total', subtotal.toFixed(2)); 
+//     $("#cart-subtotal").text(subtotal.toFixed(2));
+// }
+
+
+
+// $(document).on('click', '#BuyNow_Btn', function (event) {
+//     event.preventDefault();
+
+//     const price = $(this).data('price');
+//     const plantName = $(this).data('name');
+//     const plantImage = $(this).data('image');
+
+//     // Store only this product in localStorage
+//     localStorage.setItem('checkout_items', JSON.stringify([{ name: plantName, price: price, image: plantImage }]));
+
+//     console.log(`Price for ${plantName}:`, price);
+
+//     // Update the Order Summary Section
+//     updateCheckoutSummary();
+
+//     // Redirect to the checkout page
+//     window.location.href = "/buyNowPage";
+// });
+
+// $(document).on('click', '#Checkout_Btn', function (event) {
+//     event.preventDefault();
+
+//     let cartItems = [];
+
+//     $(".cart-item").each(function () {
+//         let item = {
+//             name: $(this).find(".item-name").text(),
+//             price: $(this).find(".item-total").text(),
+//             image: $(this).find("img").attr("src")
+//         };
+//         cartItems.push(item);
+//     });
+
+//     // Store all cart items in localStorage
+//     localStorage.setItem('checkout_items', JSON.stringify(cartItems));
+
+//     console.log("Cart Checkout Items:", cartItems);
+
+//     // Update the Order Summary Section
+//     updateCheckoutSummary();
+
+//     // Redirect to the checkout page
+//     window.location.href = "/buyNowPage";
+// });
+
+// // Function to update the checkout summary
+// function updateCheckoutSummary() {
+//     $("#checkout-summary-container").empty().removeClass("d-none");
+
+//     let checkoutItems = JSON.parse(localStorage.getItem('checkout_items')) || [];
+
+//     if (checkoutItems.length > 0) {
+//         let totalPrice = 0;
+
+//         checkoutItems.forEach(item => {
+//             let itemHtml = `
+//                 <div class="order-summary-item">
+//                     <img src="${item.image}" alt="${item.name}" class="summary-image">
+//                     <p><strong>${item.name}</strong></p>
+//                     <p>Price: ₹<span class="cart_total">${item.price}</span></p>
+//                 </div>
+//             `;
+//             $("#checkout-summary-container").append(itemHtml);
+//             totalPrice += parseFloat(item.price);
+//         });
+
+//         $("#final-price-display").html(`Total: ₹${totalPrice.toFixed(2)}`);
+//     }
+// }
+
+// // Load checkout summary on page load
+// $(document).ready(function () {
+//     updateCheckoutSummary();
+// });
+
+
+// Submit order to backend
+function get_submit_order_details_data(request_data) {
     $.ajax({
         url: '/submit_order_details',
         type: "POST",
@@ -638,8 +777,9 @@ function get_submit_order_details_data(request_data){
     });
 }
 
+// Handle form submit
 $(document).on("submit", "#checkoutForm", function (e) {
-    e.preventDefault(); 
+    e.preventDefault();
 
     const request_data = {
         email_or_phone: $("#email").val(),
@@ -657,27 +797,25 @@ $(document).on("submit", "#checkoutForm", function (e) {
     get_submit_order_details_data(request_data);
 });
 
-
-
-
-
-
+// Calculate subtotal of items on page
 function calculateSubtotal() {
     let subtotal = 0;
 
     $(".item-total").each(function () {
-        let price = parseFloat($(this).text().trim()) || 0; 
-        subtotal += price;
+        let raw = $(this).text().replace(/[^\d.]/g, ''); // Remove ₹ or text
+        let price = parseFloat(raw);
+        if (!isNaN(price)) {
+            subtotal += price;
+        }
     });
 
     console.log("Calculated subtotal:", subtotal);
 
-    localStorage.setItem('checkout_total', subtotal.toFixed(2)); 
-    $("#cart-subtotal").text(subtotal.toFixed(2));
+    localStorage.setItem('checkout_total', subtotal.toFixed(2));
+    $("#cart-subtotal").text("₹ " + subtotal.toFixed(2));
 }
 
-
-
+// Buy Now Button
 $(document).on('click', '#BuyNow_Btn', function (event) {
     event.preventDefault();
 
@@ -685,73 +823,67 @@ $(document).on('click', '#BuyNow_Btn', function (event) {
     const plantName = $(this).data('name');
     const plantImage = $(this).data('image');
 
-    // Store only this product in localStorage
-    localStorage.setItem('checkout_items', JSON.stringify([{ name: plantName, price: price, image: plantImage }]));
+    const buyNowItem = [{ name: plantName, price: price, image: plantImage }];
+    localStorage.setItem('checkout_items', JSON.stringify(buyNowItem));
 
-    console.log(`Price for ${plantName}:`, price);
-
-    // Update the Order Summary Section
-    updateCheckoutSummary();
-
-    // Redirect to the checkout page
     window.location.href = "/buyNowPage";
 });
 
+// Checkout from Cart Button
 $(document).on('click', '#Checkout_Btn', function (event) {
     event.preventDefault();
 
     let cartItems = [];
 
     $(".cart-item").each(function () {
-        let item = {
-            name: $(this).find(".item-name").text(),
-            price: $(this).find(".item-total").text(),
-            image: $(this).find("img").attr("src")
-        };
-        cartItems.push(item);
+        const name = $(this).find(".item-name").text();
+        const price = $(this).find(".item-total").text();
+        const image = $(this).find("img").attr("src");
+
+        cartItems.push({ name, price, image });
     });
 
-    // Store all cart items in localStorage
     localStorage.setItem('checkout_items', JSON.stringify(cartItems));
-
-    console.log("Cart Checkout Items:", cartItems);
-
-    // Update the Order Summary Section
-    updateCheckoutSummary();
-
-    // Redirect to the checkout page
     window.location.href = "/buyNowPage";
 });
 
-// Function to update the checkout summary
+// Update checkout summary on checkout page
 function updateCheckoutSummary() {
     $("#checkout-summary-container").empty().removeClass("d-none");
 
-    let checkoutItems = JSON.parse(localStorage.getItem('checkout_items')) || [];
+    const checkoutItems = JSON.parse(localStorage.getItem('checkout_items')) || [];
+    let totalPrice = 0;
 
-    if (checkoutItems.length > 0) {
-        let totalPrice = 0;
+    checkoutItems.forEach(item => {
+        const priceFloat = parseFloat(item.price);
+        const displayPrice = isNaN(priceFloat) ? 0 : priceFloat;
 
-        checkoutItems.forEach(item => {
-            let itemHtml = `
-                <div class="order-summary-item">
-                    <img src="${item.image}" alt="${item.name}" class="summary-image">
-                    <p><strong>${item.name}</strong></p>
-                    <p>Price: ₹<span class="cart_total">${item.price}</span></p>
-                </div>
-            `;
-            $("#checkout-summary-container").append(itemHtml);
-            totalPrice += parseFloat(item.price);
-        });
+        const itemHtml = `
+            <div class="order-summary-item">
+                <img src="${item.image}" alt="${item.name}" class="summary-image">
+                <p><strong>${item.name}</strong></p>
+                <p>Price: ₹<span class="item-total">${displayPrice.toFixed(2)}</span></p>
+            </div>
+        `;
 
-        $("#final-price-display").html(`Total: ₹${totalPrice.toFixed(2)}`);
-    }
+        $("#checkout-summary-container").append(itemHtml);
+        totalPrice += displayPrice;
+    });
+
+    $("#final-price-display").html(`Total: ₹${totalPrice.toFixed(2)}`);
+    $("#cart-subtotal").text("₹ " + totalPrice.toFixed(2));
+    localStorage.setItem('checkout_total', totalPrice.toFixed(2));
 }
 
-// Load checkout summary on page load
+// Load summary and subtotal on buyNowPage
 $(document).ready(function () {
-    updateCheckoutSummary();
+    if (window.location.pathname === "/buyNowPage") {
+        updateCheckoutSummary();
+        calculateSubtotal();
+    }
 });
+
+
 
 
 document.addEventListener("DOMContentLoaded", function () {
