@@ -218,7 +218,7 @@ $(document).on("submit", "#contactForm", function (e) {
 });
 
 $(document).on("click", "#uploadbutton", function(e){
-    e.preventDefault(); 
+    event.preventDefault(); 
              
     var plantName = $("#plantName").val();
     var productType = $("#productType").val();
@@ -226,88 +226,37 @@ $(document).on("click", "#uploadbutton", function(e){
     var plantDescription = $("#plantDescription").val();
     var plantPrice = $("#plantPrice").val();
 
-    var formData = new FormData();
-    var plantImage = $("#plantImage")[0].files[0];
+            var formData = new FormData();
+            var plantImage = $("#plantImage")[0].files[0];
                  
-    if (plantImage) {
-        formData.append("plantImage", plantImage);
-        formData.append("plantName", plantName);
-        formData.append("productType", productType);
-        formData.append("plantType", plantType);
-        formData.append("plantDescription", plantDescription);
-        formData.append("plantPrice", plantPrice);
-
-       // uploaderEmail must be added
-    let uploaderEmail = $("#uploaderEmail").val();
-    formData.append("uploaderEmail", uploaderEmail);
-
-    // Debug log
-    for (let [key, value] of formData.entries()) {
-        console.log(key, value);
-    }
-
-        $.ajax({
-            url: "/upload_image", 
-            type: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                alert("Image uploaded successfully!");
-            },
-            error: function (xhr, status, error) {
-                alert("An error occurred: " + error);
-            }
-        });
-    }       
+            if(plantImage){
+                formData.append("plantImage",plantImage);
+                formData.append("plantName", plantName);
+                formData.append("productType", productType);
+                formData.append("plantType", plantType);
+                formData.append("plantDescription", plantDescription);
+                formData.append("plantPrice", plantPrice);
+            
+                console.log("Logging FormData contents:");
+                for (let [key, value] of formData.entries()) {
+                    console.log(key, value);
+                }
+               
+                $.ajax({
+                    url: "/upload_image", 
+                    type: "POST",
+                    data: formData,
+                    processData: false, // Prevent jQuery from processing the data
+                    contentType: false, // Prevent jQuery from setting a content-type header
+                    success: function (response) {
+                        alert("Image uploaded successfully!");
+                    },
+                    error: function (xhr, status, error) {
+                        alert("An error occurred: " + error);
+                    }
+                });
+            }       
 });
-
-
-// $(document).on("click", "#uploadbutton", function(e){
-//     e.preventDefault(); 
-
-//     var plantName = $("#plantName").val();
-//     var productType = $("#productType").val();
-//     var plantType = $("#plantType").val();
-//     var plantDescription = $("#plantDescription").val();
-//     var plantPrice = $("#plantPrice").val();
-
-//     var formData = new FormData();
-//     var plantImage = $("#plantImage")[0].files[0];
-    
-//     if (plantImage) {
-//         formData.append("plantImage", plantImage);
-//         formData.append("plantName", plantName);
-//         formData.append("productType", productType);
-//         formData.append("plantType", plantType);
-//         formData.append("plantDescription", plantDescription);
-//         formData.append("plantPrice", plantPrice);
-
-//         // ✅ Add uploader email here
-//         var uploaderEmail = $("#uploaderEmail").val();
-//         formData.append("uploaderEmail", uploaderEmail);
-
-//         console.log("Logging FormData contents:");
-//         for (let [key, value] of formData.entries()) {
-//             console.log(key, value);
-//         }
-
-//         $.ajax({
-//             url: "/upload_image",
-//             type: "POST",
-//             data: formData,
-//             processData: false,
-//             contentType: false,
-//             success: function (response) {
-//                 alert("Image uploaded successfully!");
-//             },
-//             error: function (xhr, status, error) {
-//                 alert("An error occurred: " + error);
-//             }
-//         });
-//     }
-// });
-
 
 $(document).ready(function () {
     // When the page loads, fetch all data by default
@@ -317,19 +266,16 @@ $(document).ready(function () {
 $(document).on("change", "#plant-type, #fertilizer-and-seeds", function () {
     const  selectPlantType = $("#plant-type").val();
     const  selectFertilizerandSeeds = $("#fertilizer-and-seeds").val(); 
-    const adminEmail = $("#uploaderEmail").val();  // Already in your template
     
     const request_data = {
         selectPlantType: selectPlantType,
-        selectFertilizerandSeeds: selectFertilizerandSeeds,
-        adminEmail: adminEmail  // 👈 Send to backend for filtering
+        selectFertilizerandSeeds: selectFertilizerandSeeds
     };
     console.log(request_data)
 
     get_plant_image_data(request_data);
     get_cart_details_data();
 });
-
 
 function get_plant_image_data(request_data) {
     $.ajax({
@@ -384,6 +330,11 @@ function populate_plant_image_data(plant_image_data) {
     imageHtml += `</div>`;
     $("#imageContainer").html(imageHtml);
 
+    // $(document).on('click', '#BuyNow_Btn', function () {
+    //     const price = $(this).data('price');
+    //     localStorage.setItem('price', price);
+    //     console.log('Stored price in localStorage:', price);
+    // });
 
     $(document).on('click', '#ATC_Btn', function() {
         const email_id = localStorage.getItem('email');  
@@ -493,10 +444,10 @@ $(".cart-icon span").text(cartCount);
   calculateSubtotal();
 }
 
-$(document).on("click", "#Checkout_Btn", function () {
-    let totalCartPrice = $("#cart-subtotal").text().trim(); 
-    localStorage.setItem("checkout_total", totalCartPrice); 
-});
+// $(document).on("click", "#Checkout_Btn", function () {
+//     let totalCartPrice = $("#cart-subtotal").text().trim(); 
+//     localStorage.setItem("checkout_total", totalCartPrice); 
+// });
 
 // Increase or decrease item quantity
 $(document).on('click', '.increase-qty, .decrease-qty', function() {
@@ -546,71 +497,6 @@ const cartCount = $(".cart-item").length;
 $(".cart-icon span").text(cartCount);
 }
 
-// function get_submit_order_details_data(request_data){
-//     $.ajax({
-//         url: '/submit_order_details',
-//         type: "POST",
-//         dataType: "json",
-//         contentType: "application/json",
-//         data: JSON.stringify(request_data),
-//         beforeSend: function () {
-//             console.log("Submitting order form...");
-//         },
-//         success: function (response) {
-//             if (response.status === "Success") {
-//                 console.log("Order submitted successfully:", response);
-                
-//                 // Show the success message
-//                 $("#response-message").text("Thank you for buy plants! Your order has been received.").show();
-        
-//                 // Wait for 5 seconds (5000 milliseconds), then 
-//                 setTimeout(function () {
-//                     window.location.href = '/buyNowPage';
-//                 }, 3000);
-//             } else {
-//                 console.error("Submission failed:", response.message);
-//                 alert("Failed to submit the orderform: " + response.message);
-//             }
-//         },
-//         error: function (jqXhr, textStatus, errorMsg) {
-//             console.error("Error during form submission:", errorMsg);
-//             alert("An error occurred during submission: " + errorMsg);
-//         }
-//     });
-// }
-
-// $(document).on("submit", "#checkoutForm", function (e) {
-//     e.preventDefault(); 
-
-//     const email_or_phone = $("#email").val();
-//     const news_offers_subscription =  $("#newsOffers").is(":checked");
-//     const first_name =  $("#first_name").val();
-//     const last_name =  $("#last_name").val();
-//     const address =  $("#address").val();
-//     const apartment_details =  $("#apartmentDetails").val();
-//     const city = $("#city").val();
-//     const state =  $("#state").val();
-//     const pin_code = $("#pin_code").val();
-//     const phone_number = $("#phone").val();
-
-    
-//     const request_data = {
-//         email_or_phone: email_or_phone,
-//         news_offers_subscription: news_offers_subscription,
-//         first_name: first_name,
-//         last_name: last_name,
-//         address: address,
-//         apartment_details : apartment_details,
-//         city: city,
-//         state: state,
-//         pin_code: pin_code,
-//         phone_number: phone_number,
-
-//     };
-//     get_submit_order_details_data(request_data);
-// });
-
-
 function get_submit_order_details_data(request_data){
     $.ajax({
         url: '/submit_order_details',
@@ -624,15 +510,19 @@ function get_submit_order_details_data(request_data){
         success: function (response) {
             if (response.status === "Success") {
                 console.log("Order submitted successfully:", response);
-                $("#response-message").text("Thank you for buying plants! Your order has been received.").show();
+                
+                $("#response-message").text("Thank you for buy plants! Your order has been received.").show();
+        
                 setTimeout(function () {
                     window.location.href = '/buyNowPage';
-                }, 3000);
+                }, 5000);
             } else {
-                alert("Failed to submit the order form: " + response.message);
+                console.error("Submission failed:", response.message);
+                alert("Failed to submit the orderform: " + response.message);
             }
         },
         error: function (jqXhr, textStatus, errorMsg) {
+            console.error("Error during form submission:", errorMsg);
             alert("An error occurred during submission: " + errorMsg);
         }
     });
@@ -641,22 +531,32 @@ function get_submit_order_details_data(request_data){
 $(document).on("submit", "#checkoutForm", function (e) {
     e.preventDefault(); 
 
-    const request_data = {
-        email_or_phone: $("#email").val(),
-        news_offers_subscription: $("#newsOffers").is(":checked"),
-        first_name: $("#first_name").val(),
-        last_name: $("#last_name").val(),
-        address: $("#address").val(),
-        apartment_details: $("#apartmentDetails").val(),
-        city: $("#city").val(),
-        state: $("#state").val(),
-        pin_code: $("#pin_code").val(),
-        phone_number: $("#phone").val()
-    };
+    const email_or_phone = $("#email").val();
+    const news_offers_subscription =  $("#newsOffers").is(":checked");
+    const first_name =  $("#first_name").val();
+    const last_name =  $("#last_name").val();
+    const address =  $("#address").val();
+    const apartment_details =  $("#apartmentDetails").val();
+    const city = $("#city").val();
+    const state =  $("#state").val();
+    const pin_code = $("#pin_code").val();
+    const phone_number = $("#phone").val();
 
+    const request_data = {
+        email_or_phone: email_or_phone,
+        news_offers_subscription: news_offers_subscription,
+        first_name: first_name,
+        last_name: last_name,
+        address: address,
+        apartment_details : apartment_details,
+        city: city,
+        state: state,
+        pin_code: pin_code,
+        phone_number: phone_number,
+    };
+    console.log(request_data)
     get_submit_order_details_data(request_data);
 });
-
 
 
 function calculateSubtotal() {
@@ -674,81 +574,113 @@ function calculateSubtotal() {
 }
 
 
-
 $(document).on('click', '#BuyNow_Btn', function (event) {
-    event.preventDefault();
+    event.preventDefault(); 
 
     const price = $(this).data('price');
     const plantName = $(this).data('name');
     const plantImage = $(this).data('image');
 
-    // Store only this product in localStorage
-    localStorage.setItem('checkout_items', JSON.stringify([{ name: plantName, price: price, image: plantImage }]));
+    localStorage.setItem('buy_now_price', price);
+    localStorage.setItem('buy_now_plant_name', plantName);
+    localStorage.setItem('buy_now_plant_image', plantImage);
 
     console.log(`Price for ${plantName}:`, price);
 
-    // Update the Order Summary Section
-    updateCheckoutSummary();
+    $(".total").addClass("d-none");  
+    $("#checkout-summary-container").empty();  
+    
+    const finalPriceDiv = `
+        <div class="total" id="final-price-div">
+            <p><span class="currency">Total for ${plantName}: </span><span class="cart_total" id="final-cart-total">${price}</span></p>
+        </div>
+    `;
+    
+    $("#checkout-summary-container").append(finalPriceDiv).removeClass("d-none");
 
-    // Redirect to the checkout page
-    window.location.href = "/buyNowPage";
+    window.location.href = "/buyNowPage";  
+});
+
+$(document).ready(function () {
+    const buyNowPrice = localStorage.getItem('buy_now_price') || '0';
+    const plantName = localStorage.getItem('buy_now_plant_name') || 'Selected Plant';
+
+    $("#final-price-display").text(`Total for ${plantName}: ${buyNowPrice}`);
 });
 
 $(document).on('click', '#Checkout_Btn', function (event) {
-    event.preventDefault();
+    event.preventDefault(); 
 
-    let cartItems = [];
+    const finalPrice = $("#cart-subtotal").text().trim() || '0';
 
-    $(".cart-item").each(function () {
-        let item = {
-            name: $(this).find(".item-name").text(),
-            price: $(this).find(".item-total").text(),
-            image: $(this).find("img").attr("src")
-        };
-        cartItems.push(item);
-    });
+    localStorage.setItem('final_price', finalPrice);
 
-    // Store all cart items in localStorage
-    localStorage.setItem('checkout_items', JSON.stringify(cartItems));
+    console.log("Checkout Total:", finalPrice);
 
-    console.log("Cart Checkout Items:", cartItems);
+    $(".total").addClass("d-none"); 
+    $("#checkout-summary-container").empty(); 
 
-    // Update the Order Summary Section
-    updateCheckoutSummary();
+    const finalPriceDiv = `
+        <div class="total" id="final-price-div">
+            <p><span class="currency">Total: </span><span class="cart_total" id="final-cart-total">${finalPrice}</span></p>
+        </div>
+    `;
 
-    // Redirect to the checkout page
-    window.location.href = "/buyNowPage";
+    $("#checkout-summary-container").append(finalPriceDiv).removeClass("d-none");
+
+    window.location.href = "/buyNowPage";  
 });
 
-// Function to update the checkout summary
-// function updateCheckoutSummary() {
-//     $("#checkout-summary-container").empty().removeClass("d-none");
-
-//     let checkoutItems = JSON.parse(localStorage.getItem('checkout_items')) || [];
-
-//     if (checkoutItems.length > 0) {
-//         let totalPrice = 0;
-
-//         checkoutItems.forEach(item => {
-//             let itemHtml = `
-//                 <div class="order-summary-item">
-//                     <img src="${item.image}" alt="${item.name}" class="summary-image">
-//                     <p><strong>${item.name}</strong></p>
-//                     <p>Price: ₹<span class="cart_total">${item.price}</span></p>
-//                 </div>
-//             `;
-//             $("#checkout-summary-container").append(itemHtml);
-//             totalPrice += parseFloat(item.price);
-//         });
-
-//         $("#final-price-display").html(`Total: ₹${totalPrice.toFixed(2)}`);
-//     }
-}
-
-// Load checkout summary on page load
 $(document).ready(function () {
-    updateCheckoutSummary();
+    let final_price = localStorage.getItem('final_price') || '0';
+
+    if (final_price !== '0') {
+        console.log("Final Price:", final_price);
+
+        $(".total").addClass("d-none");
+
+        if (!$("#final-price-div").length) {
+            const finalPriceDiv = `
+                <div class="total" id="final-price-div">
+                    <p><span class="currency">Total: </span><span class="cart_total" id="final-cart-total">${final_price}</span></p>
+                </div>
+            `;
+        
+            $("#checkout-summary-container").append(finalPriceDiv);
+        }
+
+        $("#checkout-summary-container").removeClass("d-none");
+    }
 });
+
+
+
+
+
+// document.addEventListener('DOMContentLoaded', function() {
+//     let total = localStorage.getItem('checkout_total') || '0';
+//     let price = localStorage.getItem('price') || '0';
+
+//     console.log('Checkout Total:', total);
+//     console.log('Item Price:', price);
+
+//     let cartTotalElement = document.getElementById('cart-total');
+//     if (cartTotalElement) {
+//         cartTotalElement.textContent = total;
+//     }
+
+//     let itemTotalElement = document.getElementById('itemtotal');
+//     if (itemTotalElement) {
+//         itemTotalElement.textContent = price;
+//     }
+
+//     let cartTotalElements = document.getElementsByClassName('cart_total');
+//     for (let element of cartTotalElements) {
+//         element.textContent = price;
+//     }
+// });
+
+
 
 document.addEventListener("DOMContentLoaded", function () {
     // Array of seasonal tips by month
