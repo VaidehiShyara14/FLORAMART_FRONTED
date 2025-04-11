@@ -493,10 +493,10 @@ $(".cart-icon span").text(cartCount);
   calculateSubtotal();
 }
 
-// $(document).on("click", "#Checkout_Btn", function () {
-//     let totalCartPrice = $("#cart-subtotal").text().trim(); 
-//     localStorage.setItem("checkout_total", totalCartPrice); 
-// });
+$(document).on("click", "#Checkout_Btn", function () {
+    let totalCartPrice = $("#cart-subtotal").text().trim(); 
+    localStorage.setItem("checkout_total", totalCartPrice); 
+});
 
 // Increase or decrease item quantity
 $(document).on('click', '.increase-qty, .decrease-qty', function() {
@@ -721,28 +721,28 @@ $(document).on('click', '#Checkout_Btn', function (event) {
 });
 
 // Function to update the checkout summary
-function updateCheckoutSummary() {
-    $("#checkout-summary-container").empty().removeClass("d-none");
+// function updateCheckoutSummary() {
+//     $("#checkout-summary-container").empty().removeClass("d-none");
 
-    let checkoutItems = JSON.parse(localStorage.getItem('checkout_items')) || [];
+//     let checkoutItems = JSON.parse(localStorage.getItem('checkout_items')) || [];
 
-    if (checkoutItems.length > 0) {
-        let totalPrice = 0;
+//     if (checkoutItems.length > 0) {
+//         let totalPrice = 0;
 
-        checkoutItems.forEach(item => {
-            let itemHtml = `
-                <div class="order-summary-item">
-                    <img src="${item.image}" alt="${item.name}" class="summary-image">
-                    <p><strong>${item.name}</strong></p>
-                    <p>Price: ₹<span class="cart_total">${item.price}</span></p>
-                </div>
-            `;
-            $("#checkout-summary-container").append(itemHtml);
-            totalPrice += parseFloat(item.price);
-        });
+//         checkoutItems.forEach(item => {
+//             let itemHtml = `
+//                 <div class="order-summary-item">
+//                     <img src="${item.image}" alt="${item.name}" class="summary-image">
+//                     <p><strong>${item.name}</strong></p>
+//                     <p>Price: ₹<span class="cart_total">${item.price}</span></p>
+//                 </div>
+//             `;
+//             $("#checkout-summary-container").append(itemHtml);
+//             totalPrice += parseFloat(item.price);
+//         });
 
-        $("#final-price-display").html(`Total: ₹${totalPrice.toFixed(2)}`);
-    }
+//         $("#final-price-display").html(`Total: ₹${totalPrice.toFixed(2)}`);
+//     }
 }
 
 // Load checkout summary on page load
