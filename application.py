@@ -158,7 +158,14 @@ def logout():
     print("User has been logged out.")
     # return redirect(url_for('login')
     return render_template('homePage.html',user_login = user_login)
-
+  
+# @app.route('/logout')
+# @login_required
+# def logout():
+#     logout_user()
+#     session.clear()
+#     user_login = get_logged_in_user()
+#     return render_template('loginPage.html',user_login = user_login)
 
 def post_api_function(url, data):
     response = ''
@@ -179,7 +186,7 @@ def get_api_function(url):
     return response
 
 def get_service_url():
-    return "https://floramart-backend.onrender.com"
+   return "https://floramart-backend.onrender.com"
 
 def post_api_function(url, data):
     response = ''
@@ -243,32 +250,9 @@ def submit_contact_form():
     response = post_api_function(url,request_data)
     return json.dumps(response.json())
 
-
-
-# @app.route('/upload_image', methods=['POST'])
-# def upload_image(): 
-#     ...
-#     uploaderEmail = request.form['uploaderEmail']
-    
-#     request_data = {
-#         "image": base64_obj,
-#         "plantName": plantName,
-#         "productType": productType,
-#         "plantType": plantType,  
-#         "plantDescription": plantDescription,
-#         "plantPrice": plantPrice,
-#         "uploaderEmail": uploaderEmail
-#     }
-
-#     url = get_service_url() + '/save_image'
-#     response = post_api_function(url, request_data)
-#     return json.dumps(response.json())
-
-
 @app.route('/upload_image', methods=['POST'])
 def upload_image(): 
-    uploaderEmail = request.form['uploaderEmail']
-    
+    print("hello")
     if 'plantImage' not in request.files:
         return jsonify({'error': 'No image part in the request'}), 400
 
@@ -285,61 +269,26 @@ def upload_image():
     # print(base64_obj)
 
     request_data = {
-    "image": base64_obj,
-    "plantName": plantName,
-    "productType": productType,
-    "plantType": plantType,
-    "plantDescription": plantDescription,
-    "plantPrice": plantPrice,
-    "uploaderEmail": uploaderEmail
-}
-
+        "image": base64_obj,
+        "plantName" : plantName,
+        "productType" : productType,
+        "plantType" : plantType,  
+        "plantDescription" : plantDescription,
+        "plantPrice":plantPrice
+    }
     # print(request_data)
     url = get_service_url() + '/save_image'
     response = post_api_function(url,request_data)
     return json.dumps(response.json())
 
-
-
-# @app.route('/upload_image', methods=['POST'])
-# def upload_image():
-#     try:
-#         uploaderEmail = request.form['uploaderEmail']
-#         plantName = request.form['plantName']
-#         productType = request.form['productType']
-#         plantType = request.form['plantType']
-#         plantDescription = request.form['plantDescription']
-#         plantPrice = request.form['plantPrice']
-
-#         plantImage = request.files['plantImage']
-
-#         print("Uploader:", uploaderEmail)
-#         print("Image filename:", plantImage.filename)
-
-#         # Save the image (adjust path as needed)
-#         image_path = os.path.join("static", "plant_images", plantImage.filename)
-#         plantImage.save(image_path)
-
-#         # Now save this data into your database (skipped here)
-#         return jsonify({"status": "success", "message": "Upload complete"})
-
-#     except KeyError as e:
-#         print("Missing key:", e)
-#         return jsonify({"status": "error", "message": f"Missing form key: {e}"}), 400
-
-#     except Exception as e:
-#         print("Error:", e)
-#         return jsonify({"status": "error", "message": "Something went wrong!"}), 500
-
-
 @app.route('/get_plant_image', methods=['POST'])
 def get_plant_image():
     url = get_service_url() + '/get_plant_image_data'
     request_data = request.json
-    print("Request data:",request_data)
+    # print("Request data:",request_data)
     print(type(request_data))
     response = post_api_function(url,request_data)
-    print("Response:",response)
+    # print("Response:",response)
     return json.dumps(response.json())
 
 @app.route('/add_cart', methods=['POST'])
@@ -353,42 +302,32 @@ def add_cart():
 def get_cart_details():
     url = get_service_url() + '/get_cart_details_data'
     request_data = request.json
-    print("Request data:",request_data)
+    # print("Request data:",request_data)
     print(type(request_data))
     response = post_api_function(url,request_data)
-    print("Response:",response.json())
+    # print("Response:",response.json())
     return json.dumps(response.json())
 
 @app.route('/get_remove_cart_item', methods=['POST'])
 def get_remove_cart_item():
     url = get_service_url() + '/get_remove_cart_item_data'
     request_data = request.json
-    print(request_data)
+    # print(request_data)
     response = post_api_function(url, request_data)
     return json.dumps(response.json())
-
-# @app.route('/submit_order_details', methods=['POST'])
-# def submit_order_details():
-#     url = get_service_url() + '/get_submit_order_details_data'
-#     request_data = request.json
-#     print("Data received at order_details endpoint:", request_data)  # Debug Log
-#     print(type(request_data['email_or_phone']))
-#     response = post_api_function(url,request_data)
-#     print("Response from backend service:", response.json())  # Debug Log
-#     return json.dumps(response.json())
-
- 
 
 @app.route('/submit_order_details', methods=['POST'])
 def submit_order_details():
     url = get_service_url() + '/get_submit_order_details_data'
-    request_data = request.get_json()
-    print("Data received at order_details endpoint:", request_data)
-
-    response = requests.post(url, json=request_data)
-    return jsonify(response.json())
-
-
+    request_data = request.json
+    print("Data received at order_details endpoint:", request_data)  # Debug Log
+    print(type(request_data['email_or_phone']))
+    response = post_api_function(url,request_data)
+    print("Response from backend service:", response.json())  
+    return json.dumps(response.json())
 
 if __name__ == '__main__':
     app.run(debug=True, port=1447)
+
+
+
