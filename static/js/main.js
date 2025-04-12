@@ -577,69 +577,33 @@ function get_submit_order_details_data(request_data) {
 }
 
 
-
-
-
-
-
-
 document.addEventListener("DOMContentLoaded", function () {
-    // Array of seasonal tips by month
     const seasonalTips = [
-        // January
-        "🌱 January: \n- Watering : Reduce watering frequency for most indoor plants. Ensure soil is dry before the next watering. Look for signs of overwatering like yellow leaves.\n- Sunlight : Place plants near south-facing windows to maximize exposure to weak sunlight.\n- Fertilizing : Avoid fertilizing as most plants are dormant in winter.",
-      
-        // February
-        "🌱 February: \n-  Watering : Slightly increase watering as plants start to wake up from dormancy.\n- Sunlight : Continue maximizing natural light exposure, and consider cleaning leaves to improve light absorption.\n- Fertilizing : Prepare for the growing season with a light dose of balanced fertilizer.",
-      
-        // March
-        "🌱 March: \n- Watering : Gradually increase watering as the growing season begins.\n- Sunlight : Move plants to brighter spots. Watch for signs of sunburn as sunlight becomes stronger.\n- Fertilizing : Start fertilizing every 2-4 weeks with a balanced fertilizer for leafy plants.",
-      
-        // April
-        "🌱 April: \n- Watering : Maintain regular watering but avoid overwatering as growth increases.\n- Sunlight : Give outdoor plants time to acclimate to spring sunlight by introducing them gradually.\n- Fertilizing : Apply a nitrogen-rich fertilizer to support foliage development.",
-      
-        // May
-        "🌱 May: \n-  Watering : Increase watering frequency as temperatures rise. Morning watering is recommended.\n- Sunlight : Shield sensitive plants from intense midday sun while maximizing morning and evening light.\n- Fertilizing : Regular fertilization every 2-3 weeks supports active growth. Use phosphorus-rich fertilizer for flowering plants.",
-      
-        // June
-        "🌱 June: \n- Watering : Water deeply but less frequently to promote strong root systems.\n- Sunlight : Provide partial shade for delicate plants during intense summer heat.\n- Fertilizing : Use general-purpose fertilizer but reduce intensity if growth slows due to heat stress.",
-      
-        // July
-        "🌱 July: \n-  Watering : Monitor soil moisture levels and water plants early in the morning or late evening.\n- Sunlight : Protect plants from prolonged direct sunlight using shades or cloth.\n- Fertilizing : Apply a light dose of fertilizer every 4 weeks to sustain growth during summer.",
-      
-        // August
-        "🌱 August: \n-  Watering : Consistently water but avoid waterlogging. Ensure good drainage to prevent root rot.\n-  Sunlight : Gradually reduce intense sunlight exposure as fall nears.\n- Fertilizing : Begin tapering off fertilizers, focusing on maintenance rather than growth stimulation.",
-      
-        // September
-        "🌱 September: \n-  Watering : Slowly reduce watering as temperatures drop.\n-  Sunlight : Make the most of available sunlight by positioning plants near bright, unobstructed windows.\n- Fertilizing : Shift to a low-nitrogen fertilizer to support root strength and winter preparation.",
-      
-        // October
-        "🌱 October: \n-  Watering : Keep soil slightly moist, especially for plants moving indoors for the colder months.\n- Sunlight : Transition plants near brighter windows as outdoor sunlight diminishes.\n- Fertilizing : Pause or reduce fertilizing to avoid stimulating growth during shorter days.",
-      
-        // November
-        "🌱 November: \n-  Watering : Minimize watering and ensure good air circulation to prevent fungal issues.\n- Sunlight : Clean windows to maximize light exposure for indoor plants.\n- Fertilizing : Avoid fertilization as plants enter dormancy.",
-      
-        // December
-        "🌱 December: \n-  Watering : Keep watering minimal but consistent for indoor plants. Use lukewarm water to avoid temperature shock.\n- Sunlight : Move plants closer to windows for the shortest daylight days. Use artificial lights if necessary.\n- Fertilizing : Do not fertilize as most plants are completely dormant."
-      ];
-      
-    // Get current month (0-11, where 0 = January)
-    const currentMonth = new Date().getMonth(); // 0 for January, 1 for February, etc.
+        "🌱 January:\n- Watering: Reduce watering frequency.\n- Sunlight: Use south-facing windows.\n- Fertilizing: Avoid – plants are dormant.",
+        "🌱 February:\n- Watering: Slightly increase watering.\n- Sunlight: Clean leaves, maximize light.\n- Fertilizing: Start light feeding.",
+        "🌱 March:\n- Watering: Increase watering.\n- Sunlight: Move to brighter spots.\n- Fertilizing: Begin regular feeding.",
+        "🌱 April:\n- Watering: Maintain regular watering.\n- Sunlight: Gradually introduce spring sun.\n- Fertilizing: Use nitrogen-rich fertilizer.",
+        "🌱 May:\n- Watering: Water more frequently.\n- Sunlight: Avoid harsh midday rays.\n- Fertilizing: Phosphorus-rich for flowers.",
+        "🌱 June:\n- Watering: Deep watering, less frequent.\n- Sunlight: Provide partial shade.\n- Fertilizing: Light feeding.",
+        "🌱 July:\n- Watering: Early morning/evening.\n- Sunlight: Use shades if needed.\n- Fertilizing: Once every 4 weeks.",
+        "🌱 August:\n- Watering: Maintain moisture, avoid sogginess.\n- Sunlight: Reduce harsh sun.\n- Fertilizing: Reduce feeding.",
+        "🌱 September:\n- Watering: Reduce frequency.\n- Sunlight: Use bright windows.\n- Fertilizing: Low-nitrogen fertilizer.",
+        "🌱 October:\n- Watering: Keep slightly moist.\n- Sunlight: Move plants indoors.\n- Fertilizing: Pause feeding.",
+        "🌱 November:\n- Watering: Minimal. Ensure airflow.\n- Sunlight: Clean windows.\n- Fertilizing: Stop fertilizing.",
+        "🌱 December:\n- Watering: Minimal with lukewarm water.\n- Sunlight: Use windows or lights.\n- Fertilizing: Avoid it."
+    ];
+
     const tipContainer = document.getElementById("seasonal-tip");
-    
-    tipContainer.innerText = seasonalTips[currentMonth];
-    
-    document.getElementById("current-month").textContent = new Date()
-      .toLocaleString("default", { month: "long" });
-    document.getElementById("seasonal-tip-text").textContent = seasonalTips[currentMonth];
-  });
+    if (tipContainer) {
+        const currentMonth = new Date().getMonth(); // 0 = January
+        tipContainer.innerText = seasonalTips[currentMonth];
+    }
 
+    // Dropdown Menu Toggle (optional)
+    const dropdownBtn = document.querySelector(".dropdown-btn");
+    const dropdownContent = document.querySelector(".dropdown-content");
 
-  document.addEventListener("DOMContentLoaded", function () {
-    let dropdownBtn = document.querySelector(".dropdown-btn");
-    let dropdownContent = document.querySelector(".dropdown-content");
-
-    if (dropdownBtn) {
+    if (dropdownBtn && dropdownContent) {
         dropdownBtn.addEventListener("click", function (event) {
             event.stopPropagation();
             dropdownContent.classList.toggle("show");
@@ -650,11 +614,3 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
-
-
-  
-
-  
-
-
-
