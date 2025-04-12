@@ -329,6 +329,7 @@ function populate_plant_image_data(plant_image_data) {
     </a>
 </div>`;
     });
+}
 
     imageHtml += `</div>`;
     $("#imageContainer").html(imageHtml);
@@ -778,7 +779,6 @@ function get_submit_order_details_data(request_data) {
 // });
 
 
-
 document.addEventListener("DOMContentLoaded", function () {
     // Array of seasonal tips by month
     const seasonalTips = [
@@ -851,32 +851,6 @@ document.addEventListener("DOMContentLoaded", function () {
   
 
   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
