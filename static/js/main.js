@@ -577,40 +577,65 @@ function get_submit_order_details_data(request_data) {
 }
 
 
+
 document.addEventListener("DOMContentLoaded", function () {
     const seasonalTips = [
-        "🌱 January:\n- Watering: Reduce watering frequency.\n- Sunlight: Use south-facing windows.\n- Fertilizing: Avoid – plants are dormant.",
-        "🌱 February:\n- Watering: Slightly increase watering.\n- Sunlight: Clean leaves, maximize light.\n- Fertilizing: Start light feeding.",
-        "🌱 March:\n- Watering: Increase watering.\n- Sunlight: Move to brighter spots.\n- Fertilizing: Begin regular feeding.",
-        "🌱 April:\n- Watering: Maintain regular watering.\n- Sunlight: Gradually introduce spring sun.\n- Fertilizing: Use nitrogen-rich fertilizer.",
-        "🌱 May:\n- Watering: Water more frequently.\n- Sunlight: Avoid harsh midday rays.\n- Fertilizing: Phosphorus-rich for flowers.",
-        "🌱 June:\n- Watering: Deep watering, less frequent.\n- Sunlight: Provide partial shade.\n- Fertilizing: Light feeding.",
-        "🌱 July:\n- Watering: Early morning/evening.\n- Sunlight: Use shades if needed.\n- Fertilizing: Once every 4 weeks.",
-        "🌱 August:\n- Watering: Maintain moisture, avoid sogginess.\n- Sunlight: Reduce harsh sun.\n- Fertilizing: Reduce feeding.",
-        "🌱 September:\n- Watering: Reduce frequency.\n- Sunlight: Use bright windows.\n- Fertilizing: Low-nitrogen fertilizer.",
-        "🌱 October:\n- Watering: Keep slightly moist.\n- Sunlight: Move plants indoors.\n- Fertilizing: Pause feeding.",
-        "🌱 November:\n- Watering: Minimal. Ensure airflow.\n- Sunlight: Clean windows.\n- Fertilizing: Stop fertilizing.",
-        "🌱 December:\n- Watering: Minimal with lukewarm water.\n- Sunlight: Use windows or lights.\n- Fertilizing: Avoid it."
+        "🌱 January:\n- Watering: Reduce watering.\n- Sunlight: Use south-facing windows.\n- Fertilizing: Avoid – plants are dormant.",
+        "🌱 February:\n- Watering: Slightly increase watering.\n- Sunlight: Clean leaves.\n- Fertilizing: Light feeding.",
+        "🌱 March:\n- Watering: Increase.\n- Sunlight: Bright spots.\n- Fertilizing: Start regular feeding.",
+        "🌱 April:\n- Watering: Regular schedule.\n- Sunlight: Gradual spring exposure.\n- Fertilizing: Nitrogen-rich fertilizer.",
+        "🌱 May:\n- Watering: Morning is best.\n- Sunlight: Avoid midday heat.\n- Fertilizing: Phosphorus-rich for blooms.",
+        "🌱 June:\n- Watering: Deep, infrequent.\n- Sunlight: Provide partial shade.\n- Fertilizing: Moderate feeding.",
+        "🌱 July:\n- Watering: Early or late.\n- Sunlight: Use shades.\n- Fertilizing: Monthly feeding.",
+        "🌱 August:\n- Watering: Keep soil moist.\n- Sunlight: Reduce exposure.\n- Fertilizing: Reduce frequency.",
+        "🌱 September:\n- Watering: Decrease.\n- Sunlight: Use bright windows.\n- Fertilizing: Low-nitrogen type.",
+        "🌱 October:\n- Watering: Moist soil.\n- Sunlight: Bright indoor spots.\n- Fertilizing: Pause feeding.",
+        "🌱 November:\n- Watering: Minimal.\n- Sunlight: Maximize light.\n- Fertilizing: Stop feeding.",
+        "🌱 December:\n- Watering: Lukewarm water.\n- Sunlight: Artificial light if needed.\n- Fertilizing: Avoid it."
     ];
 
+    const tip = seasonalTips[new Date().getMonth()];
     const tipContainer = document.getElementById("seasonal-tip");
     if (tipContainer) {
-        const currentMonth = new Date().getMonth(); // 0 = January
-        tipContainer.innerText = seasonalTips[currentMonth];
-    }
-
-    // Dropdown Menu Toggle (optional)
-    const dropdownBtn = document.querySelector(".dropdown-btn");
-    const dropdownContent = document.querySelector(".dropdown-content");
-
-    if (dropdownBtn && dropdownContent) {
-        dropdownBtn.addEventListener("click", function (event) {
-            event.stopPropagation();
-            dropdownContent.classList.toggle("show");
-        });
-
-        document.addEventListener("click", function () {
-            dropdownContent.classList.remove("show");
-        });
+        tipContainer.textContent = tip;
     }
 });
+
+
+// document.addEventListener("DOMContentLoaded", function () {
+//     const seasonalTips = [
+//         "🌱 January:\n- Watering: Reduce watering frequency.\n- Sunlight: Use south-facing windows.\n- Fertilizing: Avoid – plants are dormant.",
+//         "🌱 February:\n- Watering: Slightly increase watering.\n- Sunlight: Clean leaves, maximize light.\n- Fertilizing: Start light feeding.",
+//         "🌱 March:\n- Watering: Increase watering.\n- Sunlight: Move to brighter spots.\n- Fertilizing: Begin regular feeding.",
+//         "🌱 April:\n- Watering: Maintain regular watering.\n- Sunlight: Gradually introduce spring sun.\n- Fertilizing: Use nitrogen-rich fertilizer.",
+//         "🌱 May:\n- Watering: Water more frequently.\n- Sunlight: Avoid harsh midday rays.\n- Fertilizing: Phosphorus-rich for flowers.",
+//         "🌱 June:\n- Watering: Deep watering, less frequent.\n- Sunlight: Provide partial shade.\n- Fertilizing: Light feeding.",
+//         "🌱 July:\n- Watering: Early morning/evening.\n- Sunlight: Use shades if needed.\n- Fertilizing: Once every 4 weeks.",
+//         "🌱 August:\n- Watering: Maintain moisture, avoid sogginess.\n- Sunlight: Reduce harsh sun.\n- Fertilizing: Reduce feeding.",
+//         "🌱 September:\n- Watering: Reduce frequency.\n- Sunlight: Use bright windows.\n- Fertilizing: Low-nitrogen fertilizer.",
+//         "🌱 October:\n- Watering: Keep slightly moist.\n- Sunlight: Move plants indoors.\n- Fertilizing: Pause feeding.",
+//         "🌱 November:\n- Watering: Minimal. Ensure airflow.\n- Sunlight: Clean windows.\n- Fertilizing: Stop fertilizing.",
+//         "🌱 December:\n- Watering: Minimal with lukewarm water.\n- Sunlight: Use windows or lights.\n- Fertilizing: Avoid it."
+//     ];
+
+//     const tipContainer = document.getElementById("seasonal-tip");
+//     if (tipContainer) {
+//         const currentMonth = new Date().getMonth(); // 0 = January
+//         tipContainer.innerText = seasonalTips[currentMonth];
+//     }
+
+//     // Dropdown Menu Toggle (optional)
+//     const dropdownBtn = document.querySelector(".dropdown-btn");
+//     const dropdownContent = document.querySelector(".dropdown-content");
+
+//     if (dropdownBtn && dropdownContent) {
+//         dropdownBtn.addEventListener("click", function (event) {
+//             event.stopPropagation();
+//             dropdownContent.classList.toggle("show");
+//         });
+
+//         document.addEventListener("click", function () {
+//             dropdownContent.classList.remove("show");
+//         });
+//     }
+// });
