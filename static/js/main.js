@@ -305,9 +305,10 @@ function get_plant_image_data(request_data) {
 
 // Dynamically load plant image cards
 function populate_plant_image_data(plant_image_data) {
-    console.log("Received plant image data:", plant_image_data);
+    console.log("Received data to display:", plant_image_data); 
     let imageHtml = `<div class="plant-grid">`;
 
+    // Dynamically create the image cards
     $.each(plant_image_data, function(index, row) {
         imageHtml += `
         <div class="imageSection">
@@ -329,11 +330,9 @@ function populate_plant_image_data(plant_image_data) {
     </a>
 </div>`;
     });
-}
 
     imageHtml += `</div>`;
     $("#imageContainer").html(imageHtml);
-
 // Add to cart functionality
 $(document).on('click', '.add-to-cart-btn', function () {
     const email_id = localStorage.getItem('email');
@@ -361,6 +360,7 @@ $(document).on('click', '.add-to-cart-btn', function () {
         }
     });
 });
+}
 
 // Load cart data on page load
 $(document).ready(function () {
