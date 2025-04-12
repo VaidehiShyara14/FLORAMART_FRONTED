@@ -300,341 +300,7 @@ function get_plant_image_data(request_data) {
     });
 }
 
-// function populate_plant_image_data(plant_image_data) {
-//     console.log("Received data to display:", plant_image_data); 
-//     let imageHtml = `<div class="plant-grid">`;
 
-//     // Dynamically create the image cards
-//     $.each(plant_image_data, function(index, row) {
-//         imageHtml += `
-//         <div class="imageSection">
-//     <img style="height:200px; width:200px;" alt="base64image" src="data:image/png;base64,${row['plant_images']}">
-//     <div><strong>Rs: </strong> ${row['price']}</div>
-//     <button class="action-btn add-to-cart-btn" id="ATC_Btn"
-//             data-name="${row['plant_name']}" 
-//             data-price="${row['price']}" 
-//             data-image="data:image/png;base64,${row['plant_images']}">
-//         Add To Cart
-//     </button>
-//     <a href="/buyNowPage">
-//         <button class="buy-now" id="BuyNow_Btn"
-//                 data-name="${row['plant_name']}" 
-//                 data-price="${row['price']}" 
-//                 data-image="data:image/png;base64,${row['plant_images']}">
-//             Buy Now
-//         </button>
-//     </a>
-// </div>`;
-//     });
-
-//     imageHtml += `</div>`;
-//     $("#imageContainer").html(imageHtml);
-
-//     // $(document).on('click', '#BuyNow_Btn', function () {
-//     //     const price = $(this).data('price');
-//     //     localStorage.setItem('price', price);
-//     //     console.log('Stored price in localStorage:', price);
-//     // });
-
-//     $(document).on('click', '#ATC_Btn', function() {
-//         const email_id = localStorage.getItem('email');  
-//         0
-//         const plantData = {
-//             email_id: email_id,
-//             name: $(this).data('name'),
-//             price: $(this).data('price'),
-//             image: $(this).data('image'),
-//             quantity: 1, 
-//             total: $(this).data('price') // Total = price * quantity
-//         };
-//         console.log(plantData);
-
-//         // AJAX request to add the plant to the cart
-//         $.ajax({
-//             url: '/add_cart',  
-//             type: 'POST',
-//             contentType: 'application/json',
-//             data: JSON.stringify(plantData),
-//             success: function(response) {
-//                 alert("Plant added to cart!");
-//                 console.log(response.cart_items);
-//                 updateCartCount(email_id);
-//             },
-//             error: function(err) {
-//                 alert("Failed to add plant to cart.");
-//                 console.error(err);
-//             }
-//         });
-//     });
-// }
-
-// $(document).ready(function () {
-//     get_cart_details_data();
-// });
-
-// function get_cart_details_data() {
-//     var email_id = localStorage.getItem('email');
-//     console.log(email_id)
-//     $.ajax({
-//         url: '/get_cart_details',  
-//         type: "POST",             
-//         dataType: "json",        
-//         contentType: "application/json", 
-//         data : JSON.stringify({email_id : email_id}),
-//         beforeSend: function () {
-//             console.log("Fetching data with filter:");
-//         },
-//         success: function (data, status, xhr) {
-//             console.log("Success response from Flask:", data);
-//             var raw_cart_details_data = data;
-//             var cart_details_data = JSON.parse(raw_cart_details_data['data']);
-
-//             populate_cart_details_data(cart_details_data); 
-//         },
-//         error: function (jqXhr, textStatus, errorMsg) {
-//             console.log("Error fetching data:", errorMsg);
-//         }
-//     });
-// }
-
-// // function calculateSubtotal() {
-// //     let subtotal = 0;
-
-// //     $(".item-total").each(function () {
-// //         subtotal += parseFloat($(this).text().trim());
-// //     });
-
-// //     localStorage.setItem('total',subtotal);
-// //     $("#cart-subtotal").text(subtotal.toFixed(2)); 
-// // }
-
-// function populate_cart_details_data(cart_details_data) {
-//     console.log("Received data to display:", cart_details_data); 
-//     let cartHtml = `<div class="cart-container">`;
-//     let cartCount = 0; 
-    
-// $.each(cart_details_data, function (index, row) {
-//     cartHtml += `
-//         <div class="cart-item" data-id="${row.id}">
-//             <img src="${row.plant_image}" alt="${row.plant_name}" style="width:100px; height:100px;">
-//             <div class="item-details">
-//                 <h3>${row.plant_name}</h3>
-//                 <p>Price: ${row.price}</p>
-//                 <div class="quantity">
-//                     <button class="decrease-qty" data-id="${row.id}"data-price="${row.price}">-</button>
-//                     <input type="number" class="item-qty" value="${row.quantity}" data-id="${row.id}" readonly>
-//                     <button class="increase-qty" data-id="${row.id}" data-price="${row.price}">+</button>
-//                 </div>
-//                 <p>Subtotal:<span class="item-total" id = "item--total" data-id="${row.id}">${row.total_price}</span></p>
-//                 <button class="remove-item" data-id="${row.id}">Remove</button>
-                
-//             </div>    
-//         </div>`;
-//     cartCount++;
-// });
-
-// cartHtml += `</div>
-//         <div class="cart-summary">
-//             <p><span class="currency">Total: </span> <span id="cart-subtotal">0</span></p>
-//             <a href= "/buyNowPage"><button class="buynow" id="Checkout_Btn">Checkout</button></a>
-//         </div>`;
-// $(".cart-container").html(cartHtml);
-// $(".cart-icon span").text(cartCount); 
-   
-//   calculateSubtotal();
-// }
-
-// // $(document).on("click", "#Checkout_Btn", function () {
-// //     let totalCartPrice = $("#cart-subtotal").text().trim(); 
-// //     localStorage.setItem("checkout_total", totalCartPrice); 
-// // });
-
-// // Increase or decrease item quantity
-// $(document).on('click', '.increase-qty, .decrease-qty', function() {
-// const isIncrease = $(this).hasClass("increase-qty");
-// const itemId = $(this).data("id");
-// console.log(itemId);
-// const price = $(this).data("price"); // Price per unit
-// const $quantityInput = $(`.item-qty[data-id="${itemId}"]`);
-// const $totalPriceElement = $(`.item-total[data-id="${itemId}"]`);
-// let currentQty = parseInt($quantityInput.val());
-// const newQty = isIncrease ? currentQty + 1 : Math.max(1, currentQty - 1);
-
-// // Update UI
-// $quantityInput.val(newQty);
-// const newTotalPrice = price * newQty;
-// $totalPriceElement.text(` ${newTotalPrice}`);
-// calculateSubtotal();
-// });
-
-// // Remove item from the cart
-// $(document).on("click", ".remove-item", function () {
-//     const itemId = $(this).data("id"); 
-//     if (itemId) {
-//         console.log("Clicked item's ID:", itemId); // Log the ID
-//     } else {
-//         console.error("ID not found on the clicked button!");
-//     }
-// $.ajax({
-//     url: '/get_remove_cart_item',
-//     type: 'POST',
-//     dataType: "json", 
-//     contentType: 'application/json',
-//     data: JSON.stringify({ itemId: itemId }),
-//     success: function() {
-//         $(`.cart-item[data-id="${itemId}"]`).remove(); // Remove from UI
-//         updateCartSummary();
-//         calculateSubtotal(); // Update subtotal after removing item
-//     },
-//     error: function(err) {
-//         console.error("Error removing item:", err);
-//     }
-// });
-// });
-
-// function updateCartSummary() {
-// const cartCount = $(".cart-item").length;
-// $(".cart-icon span").text(cartCount);
-// }
-
-
-
-// function get_submit_order_details_data(request_data){
-//     $.ajax({
-//         url: '/submit_order_details',
-//         type: "POST",
-//         dataType: "json",
-//         contentType: "application/json",
-//         data: JSON.stringify(request_data),
-//         beforeSend: function () {
-//             console.log("Submitting order form...");
-//         },
-//         success: function (response) {
-//             if (response.status === "Success") {
-//                 console.log("Order submitted successfully:", response);
-//                 $("#response-message").text("Thank you for buying plants! Your order has been received.").show();
-//                 setTimeout(function () {
-//                     window.location.href = '/buyNowPage';
-//                 }, 3000);
-//             } else {
-//                 alert("Failed to submit the order form: " + response.message);
-//             }
-//         },
-//         error: function (jqXhr, textStatus, errorMsg) {
-//             alert("An error occurred during submission: " + errorMsg);
-//         }
-//     });
-// }
-
-// $(document).on("submit", "#checkoutForm", function (e) {
-//     e.preventDefault(); 
-
-//     const request_data = {
-//         email_or_phone: $("#email").val(),
-//         news_offers_subscription: $("#newsOffers").is(":checked"),
-//         first_name: $("#first_name").val(),
-//         last_name: $("#last_name").val(),
-//         address: $("#address").val(),
-//         apartment_details: $("#apartmentDetails").val(),
-//         city: $("#city").val(),
-//         state: $("#state").val(),
-//         pin_code: $("#pin_code").val(),
-//         phone_number: $("#phone").val()
-//     };
-
-//     get_submit_order_details_data(request_data);
-// });
-
-
-// function calculateSubtotal() {
-//     let subtotal = 0;
-
-//     $(".item-total").each(function () {
-//         let price = parseFloat($(this).text().trim()) || 0; 
-//         subtotal += price;
-//     });
-
-//     console.log("Calculated subtotal:", subtotal);
-
-//     localStorage.setItem('checkout_total', subtotal.toFixed(2)); 
-//     $("#cart-subtotal").text(subtotal.toFixed(2));
-// }
-
-
-// $(document).on('click', '#BuyNow_Btn', function (event) {
-//     event.preventDefault();
-
-//     const price = $(this).data('price');
-//     const plantName = $(this).data('name');
-//     const plantImage = $(this).data('image');
-
-//     // Store only this product in localStorage
-//     localStorage.setItem('checkout_items', JSON.stringify([{ name: plantName, price: price, image: plantImage }]));
-
-//     console.log(`Price for ${plantName}:`, price);
-
-//     // Update the Order Summary Section
-//     updateCheckoutSummary();
-
-//     // Redirect to the checkout page
-//     window.location.href = "/buyNowPage";
-// });
-
-// $(document).on('click', '#Checkout_Btn', function (event) {
-//     event.preventDefault();
-
-//     let cartItems = [];
-
-//     $(".cart-item").each(function () {
-//         let item = {
-//             name: $(this).find(".item-name").text(),
-//             price: $(this).find(".item-total").text(),
-//             image: $(this).find("img").attr("src")
-//         };
-//         cartItems.push(item);
-//     });
-
-//     // Store all cart items in localStorage
-//     localStorage.setItem('checkout_items', JSON.stringify(cartItems));
-
-//     console.log("Cart Checkout Items:", cartItems);
-
-//     // Update the Order Summary Section
-//     updateCheckoutSummary();
-
-//     // Redirect to the checkout page
-//     window.location.href = "/buyNowPage";
-// });
-
-// // Function to update the checkout summary
-// function updateCheckoutSummary() {
-//     $("#checkout-summary-container").empty().removeClass("d-none");
-
-//     let checkoutItems = JSON.parse(localStorage.getItem('checkout_items')) || [];
-
-//     if (checkoutItems.length > 0) {
-//         let totalPrice = 0;
-
-//         checkoutItems.forEach(item => {
-//             let itemHtml = `
-//                 <div class="order-summary-item">
-//                     <img src="${item.image}" alt="${item.name}" class="summary-image">
-//                     <p><strong>${item.name}</strong></p>
-//                     <p>Price: ₹<span class="cart_total">${item.price}</span></p>
-//                 </div>
-//             `;
-//             $("#checkout-summary-container").append(itemHtml);
-//             totalPrice += parseFloat(item.price);
-//         });
-
-//         $("#final-price-display").html(`Total: ₹${totalPrice.toFixed(2)}`);
-//     }
-// }
-
-// // Load checkout summary on page load
-// $(document).ready(function () {
-//     updateCheckoutSummary();
-// });
 
 
 // Dynamically load plant image cards
@@ -643,29 +309,29 @@ function populate_plant_image_data(plant_image_data) {
     let imageHtml = `<div class="plant-grid">`;
 
     $.each(plant_image_data, function(index, row) {
-        const imageSrc = `data:image/png;base64,${row['plant_images']}`;
         imageHtml += `
         <div class="imageSection">
-            <img style="height:200px; width:200px;" alt="plant" src="${imageSrc}">
-            <div><strong>Rs: </strong> ${row['price']}</div>
-            <button class="action-btn add-to-cart-btn"
+    <img style="height:200px; width:200px;" alt="base64image" src="data:image/png;base64,${row['plant_images']}">
+    <div><strong>Rs: </strong> ${row['price']}</div>
+    <button class="action-btn add-to-cart-btn" id="ATC_Btn"
+            data-name="${row['plant_name']}" 
+            data-price="${row['price']}" 
+            data-image="data:image/png;base64,${row['plant_images']}">
+        Add To Cart
+    </button>
+    <a href="/buyNowPage">
+        <button class="buy-now" id="BuyNow_Btn"
                 data-name="${row['plant_name']}" 
                 data-price="${row['price']}" 
-                data-image="${imageSrc}">
-                Add To Cart
-            </button>
-            <button class="buy-now-btn"
-                data-name="${row['plant_name']}" 
-                data-price="${row['price']}" 
-                data-image="${imageSrc}">
-                Buy Now
-            </button>
-        </div>`;
+                data-image="data:image/png;base64,${row['plant_images']}">
+            Buy Now
+        </button>
+    </a>
+</div>`;
     });
 
     imageHtml += `</div>`;
     $("#imageContainer").html(imageHtml);
-}
 
 // Add to cart functionality
 $(document).on('click', '.add-to-cart-btn', function () {
@@ -723,38 +389,41 @@ function get_cart_details_data() {
 
 // Populate cart items
 function populate_cart_details_data(cart_details_data) {
-    let cartHtml = `<div class="cart-container">`;
-    let cartCount = 0;
-
+        console.log("Received data to display:", cart_details_data); 
+        let cartHtml = `<div class="cart-container">`;
+        let cartCount = 0; 
+        
     $.each(cart_details_data, function (index, row) {
         cartHtml += `
-        <div class="cart-item" data-id="${row.id}">
-            <img src="${row.plant_image}" alt="${row.plant_name}" style="width:100px; height:100px;">
-            <div class="item-details">
-                <h3 class="item-name">${row.plant_name}</h3>
-                <p>Price: ₹${row.price}</p>
-                <div class="quantity">
-                    <button class="decrease-qty" data-id="${row.id}" data-price="${row.price}">-</button>
-                    <input type="number" class="item-qty" value="${row.quantity}" data-id="${row.id}" readonly>
-                    <button class="increase-qty" data-id="${row.id}" data-price="${row.price}">+</button>
-                </div>
-                <p>Subtotal: ₹<span class="item-total" data-id="${row.id}">${row.total_price}</span></p>
-                <button class="remove-item" data-id="${row.id}">Remove</button>
-            </div>
-        </div>`;
+            <div class="cart-item" data-id="${row.id}">
+                <img src="${row.plant_image}" alt="${row.plant_name}" style="width:100px; height:100px;">
+                <div class="item-details">
+                    <h3>${row.plant_name}</h3>
+                    <p>Price: ${row.price}</p>
+                    <div class="quantity">
+                        <button class="decrease-qty" data-id="${row.id}"data-price="${row.price}">-</button>
+                        <input type="number" class="item-qty" value="${row.quantity}" data-id="${row.id}" readonly>
+                        <button class="increase-qty" data-id="${row.id}" data-price="${row.price}">+</button>
+                    </div>
+                    <p>Subtotal:<span class="item-total" id = "item--total" data-id="${row.id}">${row.total_price}</span></p>
+                    <button class="remove-item" data-id="${row.id}">Remove</button>
+                    
+                </div>    
+            </div>`;
         cartCount++;
     });
-
+    
     cartHtml += `</div>
-    <div class="cart-summary">
-        <p><strong>Total:</strong> ₹<span id="cart-subtotal">0</span></p>
-        <button class="buynow" id="Checkout_Btn">Checkout</button>
-    </div>`;
-
+            <div class="cart-summary">
+                <p><span class="currency">Total: </span> <span id="cart-subtotal">0</span></p>
+                <a href= "/buyNowPage"><button class="buynow" id="Checkout_Btn">Checkout</button></a>
+            </div>`;
     $(".cart-container").html(cartHtml);
-    $(".cart-icon span").text(cartCount);
-    calculateSubtotal();
-}
+    $(".cart-icon span").text(cartCount); 
+       
+      calculateSubtotal();
+    }
+
 
 // Update subtotal
 function calculateSubtotal() {
