@@ -300,10 +300,6 @@ function get_plant_image_data(request_data) {
     });
 }
 
-
-
-
-// Dynamically load plant image cards
 function populate_plant_image_data(plant_image_data) {
     console.log("Received data to display:", plant_image_data); 
     let imageHtml = `<div class="plant-grid">`;
@@ -333,207 +329,205 @@ function populate_plant_image_data(plant_image_data) {
 
     imageHtml += `</div>`;
     $("#imageContainer").html(imageHtml);
-// Add to cart functionality
-$(document).on('click', '.add-to-cart-btn', function () {
-    const email_id = localStorage.getItem('email');
-    const plantData = {
-        email_id: email_id,
-        name: $(this).data('name'),
-        price: $(this).data('price'),
-        image: $(this).data('image'),
-        quantity: 1,
-        total: $(this).data('price')
-    };
 
-    $.ajax({
-        url: '/add_cart',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(plantData),
-        success: function (response) {
-            alert("Plant added to cart!");
-            updateCartCount(email_id);
-        },
-        error: function (err) {
-            alert("Failed to add plant to cart.");
-            console.error(err);
-        }
+    // $(document).on('click', '#BuyNow_Btn', function () {
+    //     const price = $(this).data('price');
+    //     localStorage.setItem('price', price);
+    //     console.log('Stored price in localStorage:', price);
+    // });
+
+    $(document).on('click', '#ATC_Btn', function() {
+        const email_id = localStorage.getItem('email');  
+        0
+        const plantData = {
+            email_id: email_id,
+            name: $(this).data('name'),
+            price: $(this).data('price'),
+            image: $(this).data('image'),
+            quantity: 1, 
+            total: $(this).data('price') // Total = price * quantity
+        };
+        console.log(plantData);
+
+        // AJAX request to add the plant to the cart
+        $.ajax({
+            url: '/add_cart',  
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(plantData),
+            success: function(response) {
+                alert("Plant added to cart!");
+                console.log(response.cart_items);
+                updateCartCount(email_id);
+            },
+            error: function(err) {
+                alert("Failed to add plant to cart.");
+                console.error(err);
+            }
+        });
     });
-});
 }
 
-// Load cart data on page load
 $(document).ready(function () {
     get_cart_details_data();
-    updateCheckoutSummary();
 });
 
-// Get cart details
 function get_cart_details_data() {
-    const email_id = localStorage.getItem('email');
-
+    var email_id = localStorage.getItem('email');
+    console.log(email_id)
     $.ajax({
-        url: '/get_cart_details',
+        url: '/get_cart_details',  
+        type: "POST",             
+        dataType: "json",        
+        contentType: "application/json", 
+        data : JSON.stringify({email_id : email_id}),
+        beforeSend: function () {
+            console.log("Fetching data with filter:");
+        },
+        success: function (data, status, xhr) {
+            console.log("Success response from Flask:", data);
+            var raw_cart_details_data = data;
+            var cart_details_data = JSON.parse(raw_cart_details_data['data']);
+
+            populate_cart_details_data(cart_details_data); 
+        },
+        error: function (jqXhr, textStatus, errorMsg) {
+            console.log("Error fetching data:", errorMsg);
+        }
+    });
+}
+
+// function calculateSubtotal() {
+//     let subtotal = 0;
+
+//     $(".item-total").each(function () {
+//         subtotal += parseFloat($(this).text().trim());
+//     });
+
+//     localStorage.setItem('total',subtotal);
+//     $("#cart-subtotal").text(subtotal.toFixed(2)); 
+// }
+
+function populate_cart_details_data(cart_details_data) {
+    console.log("Received data to display:", cart_details_data); 
+    let cartHtml = `<div class="cart-container">`;
+    let cartCount = 0; 
+    
+$.each(cart_details_data, function (index, row) {
+    cartHtml += `
+        <div class="cart-item" data-id="${row.id}">
+            <img src="${row.plant_image}" alt="${row.plant_name}" style="width:100px; height:100px;">
+            <div class="item-details">
+                <h3>${row.plant_name}</h3>
+                <p>Price: ${row.price}</p>
+                <div class="quantity">
+                    <button class="decrease-qty" data-id="${row.id}"data-price="${row.price}">-</button>
+                    <input type="number" class="item-qty" value="${row.quantity}" data-id="${row.id}" readonly>
+                    <button class="increase-qty" data-id="${row.id}" data-price="${row.price}">+</button>
+                </div>
+                <p>Subtotal:<span class="item-total" id = "item--total" data-id="${row.id}">${row.total_price}</span></p>
+                <button class="remove-item" data-id="${row.id}">Remove</button>
+                
+            </div>    
+        </div>`;
+    cartCount++;
+});
+
+cartHtml += `</div>
+        <div class="cart-summary">
+            <p><span class="currency">Total: </span> <span id="cart-subtotal">0</span></p>
+            <a href= "/buyNowPage"><button class="buynow" id="Checkout_Btn">Checkout</button></a>
+        </div>`;
+$(".cart-container").html(cartHtml);
+$(".cart-icon span").text(cartCount); 
+   
+  calculateSubtotal();
+}
+
+// Increase or decrease item quantity
+$(document).on('click', '.increase-qty, .decrease-qty', function() {
+const isIncrease = $(this).hasClass("increase-qty");
+const itemId = $(this).data("id");
+console.log(itemId);
+const price = $(this).data("price"); // Price per unit
+const $quantityInput = $(`.item-qty[data-id="${itemId}"]`);
+const $totalPriceElement = $(`.item-total[data-id="${itemId}"]`);
+let currentQty = parseInt($quantityInput.val());
+const newQty = isIncrease ? currentQty + 1 : Math.max(1, currentQty - 1);
+
+// Update UI
+$quantityInput.val(newQty);
+const newTotalPrice = price * newQty;
+$totalPriceElement.text(` ${newTotalPrice}`);
+calculateSubtotal();
+});
+
+// Remove item from the cart
+$(document).on("click", ".remove-item", function () {
+    const itemId = $(this).data("id"); 
+    if (itemId) {
+        console.log("Clicked item's ID:", itemId); // Log the ID
+    } else {
+        console.error("ID not found on the clicked button!");
+    }
+$.ajax({
+    url: '/get_remove_cart_item',
+    type: 'POST',
+    dataType: "json", 
+    contentType: 'application/json',
+    data: JSON.stringify({ itemId: itemId }),
+    success: function() {
+        $(`.cart-item[data-id="${itemId}"]`).remove(); // Remove from UI
+        updateCartSummary();
+        calculateSubtotal(); // Update subtotal after removing item
+    },
+    error: function(err) {
+        console.error("Error removing item:", err);
+    }
+});
+});
+
+function updateCartSummary() {
+const cartCount = $(".cart-item").length;
+$(".cart-icon span").text(cartCount);
+}
+
+
+
+// Function to submit order details to the backend
+function get_submit_order_details_data(request_data) {
+    $.ajax({
+        url: '/submit_order_details',           // Backend route to handle the order
         type: "POST",
         dataType: "json",
         contentType: "application/json",
-        data: JSON.stringify({ email_id: email_id }),
-        success: function (data) {
-            const cart_details_data = JSON.parse(data['data']);
-            populate_cart_details_data(cart_details_data);
+        data: JSON.stringify(request_data),
+        success: function (response) {
+            if (response.status === "Success") {
+                // Show a thank you message
+                $("#response-message").text("Thank you! Your order has been placed.").fadeIn();
+
+                // Redirect to home page after 3 seconds
+                setTimeout(() => {
+                    window.location.href = '/HomePage';
+                }, 3000);
+            } else {
+                // Show error message if backend returns failure
+                alert("Order submission failed: " + response.message);
+            }
         },
         error: function (err) {
-            console.error("Error fetching cart details:", err);
+            // Handle any AJAX errors
+            alert("Submission error: " + err.statusText);
         }
     });
 }
 
-// Populate cart items
-function populate_cart_details_data(cart_details_data) {
-        console.log("Received data to display:", cart_details_data); 
-        let cartHtml = `<div class="cart-container">`;
-        let cartCount = 0; 
-        
-    $.each(cart_details_data, function (index, row) {
-        cartHtml += `
-            <div class="cart-item" data-id="${row.id}">
-                <img src="${row.plant_image}" alt="${row.plant_name}" style="width:100px; height:100px;">
-                <div class="item-details">
-                    <h3>${row.plant_name}</h3>
-                    <p>Price: ${row.price}</p>
-                    <div class="quantity">
-                        <button class="decrease-qty" data-id="${row.id}"data-price="${row.price}">-</button>
-                        <input type="number" class="item-qty" value="${row.quantity}" data-id="${row.id}" readonly>
-                        <button class="increase-qty" data-id="${row.id}" data-price="${row.price}">+</button>
-                    </div>
-                    <p>Subtotal:<span class="item-total" id = "item--total" data-id="${row.id}">${row.total_price}</span></p>
-                    <button class="remove-item" data-id="${row.id}">Remove</button>
-                    
-                </div>    
-            </div>`;
-        cartCount++;
-    });
-    
-    cartHtml += `</div>
-            <div class="cart-summary">
-                <p><span class="currency">Total: </span> <span id="cart-subtotal">0</span></p>
-                <a href= "/buyNowPage"><button class="buynow" id="Checkout_Btn">Checkout</button></a>
-            </div>`;
-    $(".cart-container").html(cartHtml);
-    $(".cart-icon span").text(cartCount); 
-       
-      calculateSubtotal();
-    }
-
-
-// Update subtotal
-function calculateSubtotal() {
-    let subtotal = 0;
-
-    $(".item-total").each(function () {
-        subtotal += parseFloat($(this).text().trim()) || 0;
-    });
-
-    localStorage.setItem('checkout_total', subtotal.toFixed(2));
-    $("#cart-subtotal").text(subtotal.toFixed(2));
-}
-
-// Quantity adjustment
-$(document).on('click', '.increase-qty, .decrease-qty', function () {
-    const isIncrease = $(this).hasClass("increase-qty");
-    const itemId = $(this).data("id");
-    const price = $(this).data("price");
-    const $qtyInput = $(`.item-qty[data-id="${itemId}"]`);
-    const $totalEl = $(`.item-total[data-id="${itemId}"]`);
-    let quantity = parseInt($qtyInput.val());
-
-    quantity = isIncrease ? quantity + 1 : Math.max(1, quantity - 1);
-    $qtyInput.val(quantity);
-    $totalEl.text((price * quantity).toFixed(2));
-
-    calculateSubtotal();
-});
-
-// Remove item
-$(document).on("click", ".remove-item", function () {
-    const itemId = $(this).data("id");
-
-    $.ajax({
-        url: '/get_remove_cart_item',
-        type: 'POST',
-        dataType: "json",
-        contentType: 'application/json',
-        data: JSON.stringify({ itemId: itemId }),
-        success: function () {
-            $(`.cart-item[data-id="${itemId}"]`).remove();
-            updateCartSummary();
-            calculateSubtotal();
-        },
-        error: function (err) {
-            console.error("Error removing item:", err);
-        }
-    });
-});
-
-// Update cart icon count
-function updateCartSummary() {
-    const cartCount = $(".cart-item").length;
-    $(".cart-icon span").text(cartCount);
-}
-
-// Buy Now
-$(document).on('click', '.buy-now-btn', function () {
-    const plantItem = {
-        name: $(this).data('name'),
-        price: $(this).data('price'),
-        image: $(this).data('image')
-    };
-    localStorage.setItem('checkout_items', JSON.stringify([plantItem]));
-    window.location.href = "/buyNowPage";
-});
-
-// Checkout button
-$(document).on('click', '#Checkout_Btn', function () {
-    let cartItems = [];
-
-    $(".cart-item").each(function () {
-        cartItems.push({
-            name: $(this).find(".item-name").text(),
-            price: $(this).find(".item-total").text(),
-            image: $(this).find("img").attr("src")
-        });
-    });
-
-    localStorage.setItem('checkout_items', JSON.stringify(cartItems));
-    window.location.href = "/buyNowPage";
-});
-
-// Order summary on checkout page
-function updateCheckoutSummary() {
-    const container = $("#checkout-summary-container");
-    container.empty().removeClass("d-none");
-
-    const checkoutItems = JSON.parse(localStorage.getItem('checkout_items')) || [];
-    let totalPrice = 0;
-
-    checkoutItems.forEach(item => {
-        container.append(`
-            <div class="order-summary-item">
-                <img src="${item.image}" alt="${item.name}" class="summary-image">
-                <p><strong>${item.name}</strong></p>
-                <p>Price: ₹<span class="cart_total">${item.price}</span></p>
-            </div>
-        `);
-        totalPrice += parseFloat(item.price);
-    });
-
-    $("#final-price-display").html(`Total: ₹${totalPrice.toFixed(2)}`);
-}
-
-// Form submission on checkout
+// Listen to form submission
 $(document).on("submit", "#checkoutForm", function (e) {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default HTML form submit
 
+    // Gather form data
     const request_data = {
         email_or_phone: $("#email").val(),
         news_offers_subscription: $("#newsOffers").is(":checked"),
@@ -544,98 +538,206 @@ $(document).on("submit", "#checkoutForm", function (e) {
         city: $("#city").val(),
         state: $("#state").val(),
         pin_code: $("#pin_code").val(),
-        phone_number: $("#phone").val()
+        phone_number: $("#phone").val(),
     };
 
+    console.log("Submitting order data:", request_data);
+
+    // Call AJAX function to submit data
     get_submit_order_details_data(request_data);
 });
 
-// Submit order to backend
-function get_submit_order_details_data(request_data) {
-    $.ajax({
-        url: '/submit_order_details',
-        type: "POST",
-        dataType: "json",
-        contentType: "application/json",
-        data: JSON.stringify(request_data),
-        success: function (response) {
-            if (response.status === "Success") {
-                $("#response-message").text("Thank you! Your order has been placed.").show();
-                
-                // ✅ Redirect to homepage after 3 seconds
-                setTimeout(() => {
-                    window.location.href = '/HomePage';
-                }, 3000);
-            } else {
-                alert("Order submission failed: " + response.message);
-            }
-        },
-        error: function (err) {
-            alert("Submission error: " + err.statusText);
-        }
+
+
+function calculateSubtotal() {
+    let subtotal = 0;
+
+    $(".item-total").each(function () {
+        let price = parseFloat($(this).text().trim()) || 0; 
+        subtotal += price;
     });
+
+    console.log("Calculated subtotal:", subtotal);
+
+    localStorage.setItem('checkout_total', subtotal.toFixed(2)); 
+    $("#cart-subtotal").text(subtotal.toFixed(2));
 }
+
+$(document).on('click', '#BuyNow_Btn', function (event) {
+    event.preventDefault();
+
+    const price = $(this).data('price');
+    const plantName = $(this).data('name');
+    const plantImage = $(this).data('image');
+
+    // Store only this product in localStorage
+    localStorage.setItem('checkout_items', JSON.stringify([{ name: plantName, price: price, image: plantImage }]));
+
+    console.log(`Price for ${plantName}:`, price);
+
+    // Update the Order Summary Section
+    updateCheckoutSummary();
+
+    // Redirect to the checkout page
+    window.location.href = "/buyNowPage";
+});
+
+$(document).on('click', '#Checkout_Btn', function (event) {
+    event.preventDefault();
+
+    let cartItems = [];
+
+    $(".cart-item").each(function () {
+        let item = {
+            name: $(this).find(".item-name").text(),
+            price: $(this).find(".item-total").text(),
+            image: $(this).find("img").attr("src")
+        };
+        cartItems.push(item);
+    });
+
+    // Store all cart items in localStorage
+    localStorage.setItem('checkout_items', JSON.stringify(cartItems));
+
+    console.log("Cart Checkout Items:", cartItems);
+
+    // Update the Order Summary Section
+    updateCheckoutSummary();
+
+    // Redirect to the checkout page
+    window.location.href = "/buyNowPage";
+});
+
+// Function to update the checkout summary
+function updateCheckoutSummary() {
+    $("#checkout-summary-container").empty().removeClass("d-none");
+
+    let checkoutItems = JSON.parse(localStorage.getItem('checkout_items')) || [];
+
+    if (checkoutItems.length > 0) {
+        let totalPrice = 0;
+
+        checkoutItems.forEach(item => {
+            let itemHtml = `
+                <div class="order-summary-item">
+                <img src="${item.image}" alt="${item.name}" class="summary-image" style="width: 105px; height: auto;">
+                     <p><strong>${item.name}</strong></p>
+                    <p>Price: ₹<span class="cart_total">${item.price}</span></p>
+                </div>
+            `;
+            $("#checkout-summary-container").append(itemHtml);
+            totalPrice += parseFloat(item.price);
+        });
+
+        $("#final-price-display").html(`Total: ₹${totalPrice.toFixed(2)}`);
+    }
+}
+
+// Load checkout summary on page load
+$(document).ready(function () {
+    updateCheckoutSummary();
+});
 
 
 
 document.addEventListener("DOMContentLoaded", function () {
+    // Array of seasonal tips by month
     const seasonalTips = [
-        "🌱 January:\n- Watering: Reduce watering.\n- Sunlight: Use south-facing windows.\n- Fertilizing: Avoid – plants are dormant.",
-        "🌱 February:\n- Watering: Slightly increase watering.\n- Sunlight: Clean leaves.\n- Fertilizing: Light feeding.",
-        "🌱 March:\n- Watering: Increase.\n- Sunlight: Bright spots.\n- Fertilizing: Start regular feeding.",
-        "🌱 April:\n- Watering: Regular schedule.\n- Sunlight: Gradual spring exposure.\n- Fertilizing: Nitrogen-rich fertilizer.",
-        "🌱 May:\n- Watering: Morning is best.\n- Sunlight: Avoid midday heat.\n- Fertilizing: Phosphorus-rich for blooms.",
-        "🌱 June:\n- Watering: Deep, infrequent.\n- Sunlight: Provide partial shade.\n- Fertilizing: Moderate feeding.",
-        "🌱 July:\n- Watering: Early or late.\n- Sunlight: Use shades.\n- Fertilizing: Monthly feeding.",
-        "🌱 August:\n- Watering: Keep soil moist.\n- Sunlight: Reduce exposure.\n- Fertilizing: Reduce frequency.",
-        "🌱 September:\n- Watering: Decrease.\n- Sunlight: Use bright windows.\n- Fertilizing: Low-nitrogen type.",
-        "🌱 October:\n- Watering: Moist soil.\n- Sunlight: Bright indoor spots.\n- Fertilizing: Pause feeding.",
-        "🌱 November:\n- Watering: Minimal.\n- Sunlight: Maximize light.\n- Fertilizing: Stop feeding.",
-        "🌱 December:\n- Watering: Lukewarm water.\n- Sunlight: Artificial light if needed.\n- Fertilizing: Avoid it."
-    ];
-
-    const tip = seasonalTips[new Date().getMonth()];
+        // January
+        "🌱 January: \n- Watering : Reduce watering frequency for most indoor plants. Ensure soil is dry before the next watering. Look for signs of overwatering like yellow leaves.\n- Sunlight : Place plants near south-facing windows to maximize exposure to weak sunlight.\n- Fertilizing : Avoid fertilizing as most plants are dormant in winter.",
+      
+        // February
+        "🌱 February: \n-  Watering : Slightly increase watering as plants start to wake up from dormancy.\n- Sunlight : Continue maximizing natural light exposure, and consider cleaning leaves to improve light absorption.\n- Fertilizing : Prepare for the growing season with a light dose of balanced fertilizer.",
+      
+        // March
+        "🌱 March: \n- Watering : Gradually increase watering as the growing season begins.\n- Sunlight : Move plants to brighter spots. Watch for signs of sunburn as sunlight becomes stronger.\n- Fertilizing : Start fertilizing every 2-4 weeks with a balanced fertilizer for leafy plants.",
+      
+        // April
+        "🌱 April: \n- Watering : Maintain regular watering but avoid overwatering as growth increases.\n- Sunlight : Give outdoor plants time to acclimate to spring sunlight by introducing them gradually.\n- Fertilizing : Apply a nitrogen-rich fertilizer to support foliage development.",
+      
+        // May
+        "🌱 May: \n-  Watering : Increase watering frequency as temperatures rise. Morning watering is recommended.\n- Sunlight : Shield sensitive plants from intense midday sun while maximizing morning and evening light.\n- Fertilizing : Regular fertilization every 2-3 weeks supports active growth. Use phosphorus-rich fertilizer for flowering plants.",
+      
+        // June
+        "🌱 June: \n- Watering : Water deeply but less frequently to promote strong root systems.\n- Sunlight : Provide partial shade for delicate plants during intense summer heat.\n- Fertilizing : Use general-purpose fertilizer but reduce intensity if growth slows due to heat stress.",
+      
+        // July
+        "🌱 July: \n-  Watering : Monitor soil moisture levels and water plants early in the morning or late evening.\n- Sunlight : Protect plants from prolonged direct sunlight using shades or cloth.\n- Fertilizing : Apply a light dose of fertilizer every 4 weeks to sustain growth during summer.",
+      
+        // August
+        "🌱 August: \n-  Watering : Consistently water but avoid waterlogging. Ensure good drainage to prevent root rot.\n-  Sunlight : Gradually reduce intense sunlight exposure as fall nears.\n- Fertilizing : Begin tapering off fertilizers, focusing on maintenance rather than growth stimulation.",
+      
+        // September
+        "🌱 September: \n-  Watering : Slowly reduce watering as temperatures drop.\n-  Sunlight : Make the most of available sunlight by positioning plants near bright, unobstructed windows.\n- Fertilizing : Shift to a low-nitrogen fertilizer to support root strength and winter preparation.",
+      
+        // October
+        "🌱 October: \n-  Watering : Keep soil slightly moist, especially for plants moving indoors for the colder months.\n- Sunlight : Transition plants near brighter windows as outdoor sunlight diminishes.\n- Fertilizing : Pause or reduce fertilizing to avoid stimulating growth during shorter days.",
+      
+        // November
+        "🌱 November: \n-  Watering : Minimize watering and ensure good air circulation to prevent fungal issues.\n- Sunlight : Clean windows to maximize light exposure for indoor plants.\n- Fertilizing : Avoid fertilization as plants enter dormancy.",
+      
+        // December
+        "🌱 December: \n-  Watering : Keep watering minimal but consistent for indoor plants. Use lukewarm water to avoid temperature shock.\n- Sunlight : Move plants closer to windows for the shortest daylight days. Use artificial lights if necessary.\n- Fertilizing : Do not fertilize as most plants are completely dormant."
+      ];
+      
+    // Get current month (0-11, where 0 = January)
+    const currentMonth = new Date().getMonth(); // 0 for January, 1 for February, etc.
     const tipContainer = document.getElementById("seasonal-tip");
-    if (tipContainer) {
-        tipContainer.textContent = tip;
+    
+    tipContainer.innerText = seasonalTips[currentMonth];
+    
+    document.getElementById("current-month").textContent = new Date()
+      .toLocaleString("default", { month: "long" });
+    document.getElementById("seasonal-tip-text").textContent = seasonalTips[currentMonth];
+  });
+
+
+  document.addEventListener("DOMContentLoaded", function () {
+    let dropdownBtn = document.querySelector(".dropdown-btn");
+    let dropdownContent = document.querySelector(".dropdown-content");
+
+    if (dropdownBtn) {
+        dropdownBtn.addEventListener("click", function (event) {
+            event.stopPropagation();
+            dropdownContent.classList.toggle("show");
+        });
+
+        document.addEventListener("click", function () {
+            dropdownContent.classList.remove("show");
+        });
     }
 });
 
 
-// document.addEventListener("DOMContentLoaded", function () {
-//     const seasonalTips = [
-//         "🌱 January:\n- Watering: Reduce watering frequency.\n- Sunlight: Use south-facing windows.\n- Fertilizing: Avoid – plants are dormant.",
-//         "🌱 February:\n- Watering: Slightly increase watering.\n- Sunlight: Clean leaves, maximize light.\n- Fertilizing: Start light feeding.",
-//         "🌱 March:\n- Watering: Increase watering.\n- Sunlight: Move to brighter spots.\n- Fertilizing: Begin regular feeding.",
-//         "🌱 April:\n- Watering: Maintain regular watering.\n- Sunlight: Gradually introduce spring sun.\n- Fertilizing: Use nitrogen-rich fertilizer.",
-//         "🌱 May:\n- Watering: Water more frequently.\n- Sunlight: Avoid harsh midday rays.\n- Fertilizing: Phosphorus-rich for flowers.",
-//         "🌱 June:\n- Watering: Deep watering, less frequent.\n- Sunlight: Provide partial shade.\n- Fertilizing: Light feeding.",
-//         "🌱 July:\n- Watering: Early morning/evening.\n- Sunlight: Use shades if needed.\n- Fertilizing: Once every 4 weeks.",
-//         "🌱 August:\n- Watering: Maintain moisture, avoid sogginess.\n- Sunlight: Reduce harsh sun.\n- Fertilizing: Reduce feeding.",
-//         "🌱 September:\n- Watering: Reduce frequency.\n- Sunlight: Use bright windows.\n- Fertilizing: Low-nitrogen fertilizer.",
-//         "🌱 October:\n- Watering: Keep slightly moist.\n- Sunlight: Move plants indoors.\n- Fertilizing: Pause feeding.",
-//         "🌱 November:\n- Watering: Minimal. Ensure airflow.\n- Sunlight: Clean windows.\n- Fertilizing: Stop fertilizing.",
-//         "🌱 December:\n- Watering: Minimal with lukewarm water.\n- Sunlight: Use windows or lights.\n- Fertilizing: Avoid it."
-//     ];
+  
 
-//     const tipContainer = document.getElementById("seasonal-tip");
-//     if (tipContainer) {
-//         const currentMonth = new Date().getMonth(); // 0 = January
-//         tipContainer.innerText = seasonalTips[currentMonth];
-//     }
+  
 
-//     // Dropdown Menu Toggle (optional)
-//     const dropdownBtn = document.querySelector(".dropdown-btn");
-//     const dropdownContent = document.querySelector(".dropdown-content");
 
-//     if (dropdownBtn && dropdownContent) {
-//         dropdownBtn.addEventListener("click", function (event) {
-//             event.stopPropagation();
-//             dropdownContent.classList.toggle("show");
-//         });
 
-//         document.addEventListener("click", function () {
-//             dropdownContent.classList.remove("show");
-//         });
-//     }
-// });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
